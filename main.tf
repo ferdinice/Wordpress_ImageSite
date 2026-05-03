@@ -48,3 +48,28 @@ resource "aws_subnet" "ferdi_prisub_2" {
 
   tags = { Name = "ferdi-private-2" }
 }
+
+############################################
+# INTERNET GATEWAY
+############################################
+
+resource "aws_internet_gateway" "ferdi_igw" {
+  vpc_id = aws_vpc.ferdi_vpc.id
+
+  tags = { Name = "ferdi-igw" }
+}
+
+############################################
+# NAT GATEWAY (PRIVATE INTERNET ACCESS)
+############################################
+
+resource "aws_eip" "ferdi_eip" {
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "ferdi_nat" {
+  allocation_id = aws_eip.ferdi_eip.id
+  subnet_id     = aws_subnet.ferdi_pubsub_1.id
+
+  tags = { Name = "ferdi-nat" }
+}
