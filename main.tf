@@ -132,3 +132,18 @@ resource "aws_security_group" "ferdi_backend_sg" {
     security_groups = [aws_security_group.ferdi_frontend_sg.id]
   }
 }
+
+
+############################################
+# RDS DATABASE (MySQL)
+############################################
+
+resource "aws_db_instance" "ferdi_rds" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  instance_class       = "db.t3.micro"
+  username             = "admin"
+  password             = "admin123"
+  skip_final_snapshot  = true
+  publicly_accessible  = false
+}
