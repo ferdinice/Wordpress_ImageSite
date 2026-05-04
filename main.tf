@@ -73,3 +73,27 @@ resource "aws_nat_gateway" "ferdi_nat" {
 
   tags = { Name = "ferdi-nat" }
 }
+
+############################################
+# ROUTE TABLES
+############################################
+
+# Public Route Table
+resource "aws_route_table" "ferdi_pub_rt" {
+  vpc_id = aws_vpc.ferdi_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.ferdi_igw.id
+  }
+}
+
+# Private Route Table
+resource "aws_route_table" "ferdi_pri_rt" {
+  vpc_id = aws_vpc.ferdi_vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.ferdi_nat.id
+  }
+}
