@@ -147,3 +147,25 @@ resource "aws_db_instance" "ferdi_rds" {
   skip_final_snapshot  = true
   publicly_accessible  = false
 }
+
+############################################
+# EC2 INSTANCE (WORDPRESS SERVER)
+############################################
+
+resource "aws_instance" "ferdi_ec2" {
+  ami           = "ami-02efa8fd15663fc12"
+  instance_type = "t3.micro"
+
+  subnet_id = aws_subnet.ferdi_pubsub_1.id
+
+  vpc_security_group_ids = [
+    aws_security_group.ferdi_frontend_sg.id
+  ]
+
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "ferdi-wordpress-server"
+  }
+}
+
