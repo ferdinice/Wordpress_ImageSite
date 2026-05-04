@@ -97,3 +97,38 @@ resource "aws_route_table" "ferdi_pri_rt" {
     nat_gateway_id = aws_nat_gateway.ferdi_nat.id
   }
 }
+
+############################################
+# SECURITY GROUPS
+############################################
+
+# Frontend (Web Traffic)
+resource "aws_security_group" "ferdi_frontend_sg" {
+  vpc_id = aws_vpc.ferdi_vpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Backend (Database)
+resource "aws_security_group" "ferdi_backend_sg" {
+  vpc_id = aws_vpc.ferdi_vpc.id
+
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ferdi_frontend_sg.id]
+  }
+}
