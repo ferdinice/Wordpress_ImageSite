@@ -169,3 +169,35 @@ resource "aws_instance" "ferdi_ec2" {
   }
 }
 
+############################################
+# LOAD BALANCER
+############################################
+
+resource "aws_lb" "ferdi_alb" {
+  name               = "ferdi-alb"
+  load_balancer_type = "application"
+  subnets            = [
+    aws_subnet.ferdi_pubsub_1.id,
+    aws_subnet.ferdi_pubsub_2.id
+  ]
+}
+
+############################################
+# DOMAIN + DNS (ROUTE53)
+############################################
+
+data "aws_route53_zone" "ferdi_zone" {
+  name = var.domain_name
+}
+
+resource "aws_route53_record" "ferdi_record" {
+  zone_id = data.aws_route53_zone.ferdi_zone.zone_id
+  name    = var.domain_name
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.ferdi_alb.dns_name
+    zone_id                = aws_lb.ferdi_alb.zone_id
+    evaluate_target_health = true
+  }
+}
